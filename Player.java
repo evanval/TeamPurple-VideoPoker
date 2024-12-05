@@ -22,5 +22,6 @@ public class Player {
 		for (Card card : hand) {
 			System.out.println(card);
 		}
+		System.out.println((""));
 	}
 }
