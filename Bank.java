@@ -1,3 +1,4 @@
+package team_purple.final_video_poker;
 
 public class Bank {
 	private int bankroll;
