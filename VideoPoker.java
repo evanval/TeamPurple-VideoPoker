@@ -1,3 +1,5 @@
+package team_purple.final_video_poker;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ public class VideoPoker {
     // Method to generate a deck of 52 cards
     public static List<Card> generateDeck() {
         String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
-        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
         List<Card> deck = new ArrayList<>();
 
         for (String suit : suits) {
@@ -118,7 +120,7 @@ public class VideoPoker {
     }
 
     public static boolean isJacksOrBetter(Map<String, Integer> rankCount) {
-        List<String> highRanks = Arrays.asList("J", "Q", "K", "A");
+        List<String> highRanks = Arrays.asList("Jack", "Queen", "King", "Ace");
         for (Map.Entry<String, Integer> entry : rankCount.entrySet()) {
             if (highRanks.contains(entry.getKey()) && entry.getValue() == 2) {
                 return true;
@@ -140,10 +142,10 @@ public class VideoPoker {
         rankToValue.put("8", 8);
         rankToValue.put("9", 9);
         rankToValue.put("10", 10);
-        rankToValue.put("J", 11);
-        rankToValue.put("Q", 12);
-        rankToValue.put("K", 13);
-        rankToValue.put("A", 14);  // Ace can be high
+        rankToValue.put("Jack", 11);
+        rankToValue.put("Queen", 12);
+        rankToValue.put("King", 13);
+        rankToValue.put("Ace", 14);
         return rankToValue;
     }
 
@@ -213,6 +215,18 @@ public class VideoPoker {
         }
         return newHand;
 
+    }
+
+    public static Card dealCard(List<Card> deck) {
+        if (deck.isEmpty()) {
+            System.out.println("Deck is empty.");
+            return null;
+        }
+        //Generate random card from deck
+        int index = (int) (Math.random() * deck.size());
+        Card card = deck.get(index);
+        deck.remove(index);
+        return card;
     }
 
     public static void main(String[] args) {
