@@ -1,3 +1,5 @@
+package team_purple.final_video_poker;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,5 @@ public class Player {
 		for (Card card : hand) {
 			System.out.println(card);
 		}
-		System.out.println((""));
 	}
 }
