@@ -166,6 +166,55 @@ public class VideoPoker {
         return "No winning hand";
        }
 
+    public static int calculatePayout(String result, int bet) {
+        return switch (result) {
+            case "Royal Flush!" -> bet * 250;
+            case "Straight Flush!" -> bet * 50;
+            case "Four of a Kind!" -> bet * 25;
+            case "Full House!" -> bet * 9;
+            case "Flush!" -> bet * 6;
+            case "Straight!" -> bet * 4;
+            case "Three of a Kind!" -> bet * 3;
+            case "Two Pair!" -> bet * 2;
+            case "Jacks or Better!" -> bet;
+            default -> 0;
+        };
+    }
+
+    public static List<Card> replaceCards(List<Card> hand, List<Card> deck) {
+        List<Integer> indicesToHold = new ArrayList<>();
+        boolean validInput = false;
+        while (!validInput) {
+            try {
+                System.out.println("Which cards would you like to hold? Enter positions (1-5) seperated by spaces:");
+                Scanner scanner = new Scanner(System.in);
+                String[] holdIndices = scanner.nextLine().split(" ");
+                for (String index : holdIndices) {
+                    int position = Integer.parseInt(index) - 1;
+                    if (position >= 0 && position < 5) {
+                        indicesToHold.add(position);
+                    } else {
+                        throw new NumberFormatException();
+                    }
+                }
+                validInput = true;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter numbers between 1 and 5");
+            }
+        }
+
+        List<Card> newHand = new ArrayList<>(hand);
+        int deckIndex = 5; //start from the 6th card in deck
+        for (int i = 0; i < hand.size(); i++) {
+            if (!indicesToHold.contains(i)) {
+                newHand.set(i, deck.get(deckIndex++)); //Replaces card with next one in deck
+            }
+        }
+        return newHand;
+
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -182,10 +231,10 @@ public class VideoPoker {
             shuffleDeck(deck);
 
             // Player places a bet
-            System.out.print("Place your bet (between 1 and 5 credits): ");
+            System.out.print("Place your bet (between 1 and "+ bank.getBankroll() + " credits): ");
             int bet = scanner.nextInt();
             if (!bank.placeBet(bet)) {
-                System.out.println("Insufficient funds to place that bet.");
+                System.out.println("Invalid bet amount. Please enter a value between 1 and " + bank.getBankroll());
                 continue;
             }
 
@@ -193,17 +242,26 @@ public class VideoPoker {
             player.setHand(dealHand(deck));
             player.displayHand();
 
-            // Evaluate hand
+            //Card Replacement
+            List<Card> finalHand = replaceCards(player.getHand(), deck);
+            player.setHand(finalHand);
+            player.displayHand();
+
+            // Evaluate final hand
             String result = evaluateHand(player.getHand());
             System.out.println(result);
 
-            if (!result.equals("No winning hand")) {
-                System.out.println("You won!");
-                // Dummy payout for now (bet * 2)
-                bank.addWinnings(bet * 2);
+
+
+            //Payout handling
+            int payout = calculatePayout(result, bet);
+            if (payout > 0) {
+                System.out.println("You won " + payout + " credits!");
+                bank.addWinnings(payout);
             } else {
-                System.out.println("You lost this round.");
+                System.out.println("You lost this round");
             }
+
 
             // Display updated bankroll
             bank.printBankroll();
@@ -217,5 +275,4 @@ public class VideoPoker {
         scanner.close();
     }
 }
-
 
